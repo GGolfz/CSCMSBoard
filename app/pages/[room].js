@@ -6,6 +6,7 @@ let socket;
 
 const Room = ({ room }) => {
   const router = useRouter();
+  const [zoom,setZoom] = useState(1)
   useEffect(() => {
     socket = io();
     socket.emit("join-room", room);
@@ -65,14 +66,23 @@ const Room = ({ room }) => {
   };
   const clearBoard = () => {
     const key = prompt("Please Enter room key");
-    socket.emit("clear-room", key);
+    socket.emit("clear-board", {key,room});
+    setData([])
   };
+  const changeZoom = (val) => {
+    if(zoom+val >= 0.1 && zoom+val <= 2){
+      setZoom(zoom+val);
+    }
+  }
   return (
     <Fragment>
       <div className="container">
         <div className="roomTitle">Room: {room}</div>
+        <div onClick={()=>{changeZoom(0.1)}}>+</div>
+        <div onClick={()=>{changeZoom(-0.1)}}>-</div>
+        <div onClick={clearBoard}>Clear</div>
         <div className="preview-board">
-          <div className="board" onClick={createPaper}>
+          <div className="board" style={{transform:`scale(${zoom})`,height:`${100/zoom}%`,width:`${100/zoom}%`}} onClick={createPaper}>
             {create ? (
               <Paper
                 data={current}
@@ -119,8 +129,6 @@ const Room = ({ room }) => {
           }
           .board {
             position: relative;
-            width: 1000vw;
-            height: 1000vh;
           }
         `}
       </style>

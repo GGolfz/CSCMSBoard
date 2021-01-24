@@ -35,7 +35,7 @@ io.on("connect", (socket) => {
     if (Object.keys(boardData).includes(data.room)) {
       if (boardData[data.room].key === data.key) {
         boardData[data.room].data = [];
-        socket.to(room).emit("update-board", []);
+        socket.to(data.room).emit("update-board", []);
       }
     }
   });
